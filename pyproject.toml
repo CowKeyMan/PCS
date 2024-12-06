@@ -1,0 +1,21 @@
+[project]
+name = "pcs"
+version = "0.0.1"
+authors = [
+  { name="Daniel Cauchi", email="cowkeyman@gmail.com" },
+]
+description = "A strange programming framework"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "License :: OSI Approved :: MIT No Attribution License (MIT-0)",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3 :: Only",
+  "Natural Language :: English",
+  "Intended Audience :: Developers"
+]
+
+[project.urls]
+Homepage = "https://github.com/CowKeyMan/PCS"
+Issues = "https://github.com/CowKeyMan/PCS/issues"
