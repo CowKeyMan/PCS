@@ -9,7 +9,7 @@ class Args(argparse.Namespace):
         self.rest: list[str] = []
 
 
-def parse_arguments(obj: object):
+def parse_arguments(obj: object) -> None:
     args = do_parse_arguments()
     update_dict = get_update_dict_from_comma_separated_file_list(args.args_files)
     update_dict_with_rest_arguments(update_dict, args.rest)
@@ -57,7 +57,9 @@ def get_update_dict_from_files(files: list[str]) -> dict[str, object]:
     return args
 
 
-def update_dict_with_rest_arguments(update_dict: dict[str, object], rest: list[str]):
+def update_dict_with_rest_arguments(
+    update_dict: dict[str, object], rest: list[str]
+) -> None:
     for r in rest:
         key, value = r.split("=")
         if value.isdigit():
@@ -70,7 +72,7 @@ def update_dict_with_rest_arguments(update_dict: dict[str, object], rest: list[s
         update_dict[key] = value
 
 
-def update_object(obj: object, update_dict: dict[str, object]):
+def update_object(obj: object, update_dict: dict[str, object]) -> None:
     for key, value in update_dict.items():
         assert hasattr(obj, key), f"obj has no attribute {key}"
         target_type: type = obj.__annotations__[key]
@@ -79,4 +81,3 @@ def update_object(obj: object, update_dict: dict[str, object]):
             f"does not have the target type of {target_type}"
         )
         setattr(obj, key, value)
-
