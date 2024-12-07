@@ -1,4 +1,4 @@
-import yaml
+import oyaml as yaml
 import argparse
 
 
