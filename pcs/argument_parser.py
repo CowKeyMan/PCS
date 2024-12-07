@@ -75,9 +75,4 @@ def update_dict_with_rest_arguments(
 def update_object(obj: object, update_dict: dict[str, object]) -> None:
     for key, value in update_dict.items():
         assert hasattr(obj, key), f"obj has no attribute {key}"
-        target_type: type = obj.__annotations__[key]
-        assert isinstance(value, target_type), (
-            f"Key: {key} with value: {value} of type {type(value)} "
-            f"does not have the target type of {target_type}"
-        )
         setattr(obj, key, value)

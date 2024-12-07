@@ -1,6 +1,6 @@
 [project]
 name = "pipeline-component-system"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
   { name="Daniel Cauchi", email="cowkeyman@gmail.com" },
 ]
