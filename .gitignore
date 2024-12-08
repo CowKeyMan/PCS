@@ -2,3 +2,4 @@ build/
 pcs.egg-info/
 Session.vim
 dist/
+*egg-info*

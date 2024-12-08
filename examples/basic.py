@@ -16,7 +16,7 @@ def print_add_system(i: int, f: float):
     print("Add System:", i + f)
 
 
-def result_add_system(i: int, f: float, result: float) -> dict[str, float]:
+def result_add_system(i: int, f: float, result: float):
     return {"result": result + i + f}
 
 
@@ -24,11 +24,16 @@ def print_result(result: float):
     print("Result:", result)
 
 
+def print_string(s: str):
+    print("s:", s)
+
+
 component = initialize_object_nones(Component)
 parse_arguments(component)
 
 pipeline = Pipeline(
-    component, [print_add_system, print_result, result_add_system, print_result]
+    component,
+    [print_add_system, print_result, result_add_system, print_result, print_string],
 )
 
 pipeline.execute()

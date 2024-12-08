@@ -68,7 +68,7 @@ def update_dict_with_rest_arguments(
             try:
                 value = float(value)
             except ValueError:
-                print("Not a float")
+                pass  # not an int nor a float
         update_dict[key] = value
 
 
