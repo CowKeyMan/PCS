@@ -9,6 +9,11 @@ class Args(argparse.Namespace):
         self.rest: list[str] = []
 
 
+def parse_arguments_from_files(args_files) -> None:
+    update_dict = get_update_dict_from_comma_separated_file_list(args_files)
+    update_object(obj, update_dict)
+
+
 def parse_arguments(obj: object) -> None:
     args = do_parse_arguments()
     update_dict = get_update_dict_from_comma_separated_file_list(args.args_files)
