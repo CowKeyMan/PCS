@@ -42,4 +42,8 @@ class Pipeline:
         if result is None:
             return
         for name, obj in result.items():
+            assert hasattr(self.component, name), (
+                f"The component does not have a property '{name}', "
+                "but you are trying to set it"
+            )
             setattr(self.component, name, obj)

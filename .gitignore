@@ -3,3 +3,4 @@ pcs.egg-info/
 Session.vim
 dist/
 *egg-info*
+__pycache__/
