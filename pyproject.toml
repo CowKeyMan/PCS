@@ -1,6 +1,6 @@
 [project]
 name = "pipeline-component-system"
-version = "0.2"
+version = "0.3"
 authors = [
   { name="Daniel Cauchi", email="cowkeyman@gmail.com" },
 ]
@@ -22,3 +22,12 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/CowKeyMan/PCS"
 Issues = "https://github.com/CowKeyMan/PCS/issues"
+
+[tool.pyright]
+typeCheckingMode = "standard"
+reportPrivateImportUsage = false
+
+[tool.ruff]
+lint.extend-select = ["I"]
+line-length = 80
+indent-width = 4
