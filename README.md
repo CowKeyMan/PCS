@@ -102,7 +102,7 @@ parse_arguments(component)
 
 An example of such a yaml file is in `examples/configs/default.yaml`
 
-Then to run your application, you can call (for the example): `python examples/basic.py --args-files=examples/configs/default.yaml,examples/configs/default.yaml --rest s="hello world"`
+Then to run your application, you can call (for the example): `python examples/basic.py --args-files=examples/configs/default.yaml,examples/configs/override1.yaml --rest s="hello world" -r s2="hello world2"`
 
 Note: config files specified later will override earlier ones, and 'rest' options will override options in the config files. You can also use `-r` as a shorthand for `--rest`.
 

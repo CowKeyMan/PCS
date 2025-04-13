@@ -35,7 +35,7 @@ def do_parse_arguments() -> Args:
     _ = parser.add_argument(
         "--rest",
         "-r",
-        nargs="+",
+        action="append",
         help=(
             "Set a number of key-value pairs like <key>=<value>. "
             "Values may have spaces if the whole value is wrapped"
