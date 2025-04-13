@@ -15,11 +15,12 @@ def parse_arguments_from_files(obj: object, args_files: list[str]) -> None:
     update_object(obj, update_dict)
 
 
-def parse_arguments(obj: object) -> dict[str, Any]:
+def parse_arguments(obj: object = None) -> dict[str, Any]:
     args = do_parse_arguments()
     update_dict = get_update_dict_from_comma_separated_file_list(args.args_files)
     update_dict_with_rest_arguments(update_dict, args.rest)
-    update_object(obj, update_dict)
+    if obj is not None:
+        update_object(obj, update_dict)
     return update_dict
 
 
