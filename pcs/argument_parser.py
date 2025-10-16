@@ -1,6 +1,30 @@
-import oyaml as yaml
 import argparse
-from typing import Any
+from typing import TypeVar
+
+from omegaconf import DictConfig, OmegaConf
+
+from pcs.component import Component
+
+T = TypeVar("T")
+
+
+def parse_arguments_cli(ClsConf: object, ClsRealtime: type[T]) -> Component[T]:
+    conf = OmegaConf.structured(ClsConf)
+    args = do_parse_arguments()
+    conf = update_dict_with_comma_separated_file_list(conf, args.args_files)
+    assert isinstance(conf, DictConfig)
+    conf = update_dict_with_rest_arguments(conf, args.rest)
+    assert isinstance(conf, DictConfig)
+    return Component.init_with_conf(conf, ClsRealtime)
+
+
+def parse_arguments_from_files(
+    ClsConf: object, ClsRealtime: type[T], files: list[str]
+) -> Component[T]:
+    conf = OmegaConf.structured(ClsConf)
+    conf = update_dict_with_files(conf, files)
+    assert isinstance(conf, DictConfig)
+    return Component.init_with_conf(conf, ClsRealtime)
 
 
 class Args(argparse.Namespace):
@@ -8,20 +32,6 @@ class Args(argparse.Namespace):
         super().__init__()
         self.args_files: str = ""
         self.rest: list[str] = []
-
-
-def parse_arguments_from_files(obj: object, args_files: list[str]) -> None:
-    update_dict = get_update_dict_from_files(args_files)
-    update_object(obj, update_dict)
-
-
-def parse_arguments(obj: object = None) -> dict[str, Any]:
-    args = do_parse_arguments()
-    update_dict = get_update_dict_from_comma_separated_file_list(args.args_files)
-    update_dict_with_rest_arguments(update_dict, args.rest)
-    if obj is not None:
-        update_object(obj, update_dict)
-    return update_dict
 
 
 def do_parse_arguments() -> Args:
@@ -46,41 +56,19 @@ def do_parse_arguments() -> Args:
             "take precedence over those that come from files"
         ),
     )
-    args = Args()
-    args = parser.parse_args(namespace=args)
+    args = parser.parse_args(namespace=Args())
     return args
 
 
-def get_update_dict_from_comma_separated_file_list(files: str) -> dict[str, object]:
-    return get_update_dict_from_files(files.split(","))
+def update_dict_with_comma_separated_file_list(conf: DictConfig, files: str):
+    return update_dict_with_files(
+        conf, files.split(",") if len(files) > 0 else []
+    )
 
 
-def get_update_dict_from_files(files: list[str]) -> dict[str, object]:
-    if len(files) == 1 and files[0] == "":
-        return {}
-    args: dict[str, object] = {}
-    for file in files:
-        with open(file, "r", encoding="utf-8") as f:
-            args |= yaml.safe_load(f)
-    return args
+def update_dict_with_files(conf: DictConfig, files: list[str]):
+    return OmegaConf.merge(conf, *[OmegaConf.load(f) for f in files])
 
 
-def update_dict_with_rest_arguments(
-    update_dict: dict[str, object], rest: list[str]
-) -> None:
-    for r in rest:
-        key, value = r.split("=")
-        if value.isdigit():
-            value = int(value)
-        else:
-            try:
-                value = float(value)
-            except ValueError:
-                pass  # not an int nor a float
-        update_dict[key] = value
-
-
-def update_object(obj: object, update_dict: dict[str, object]) -> None:
-    for key, value in update_dict.items():
-        assert hasattr(obj, key), f"obj has no attribute {key}"
-        setattr(obj, key, value)
+def update_dict_with_rest_arguments(conf: DictConfig, rest: list[str]):
+    return OmegaConf.merge(conf, OmegaConf.from_dotlist(rest))

@@ -1,14 +1,14 @@
 [project]
 name = "pipeline-component-system"
-version = "0.3.1"
+version = "0.4.0"
 authors = [
-  { name="Daniel Cauchi", email="cowkeyman@gmail.com" },
+  { name="Daniel Cauchi" },
 ]
 description = "A strange programming framework"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 classifiers = [
-  "Development Status :: 2 - Pre-Alpha",
+  "Development Status :: 4 - Beta",
   "License :: OSI Approved :: MIT No Attribution License (MIT-0)",
   "Operating System :: POSIX :: Linux",
   "Programming Language :: Python :: 3 :: Only",
@@ -16,7 +16,8 @@ classifiers = [
   "Intended Audience :: Developers"
 ]
 dependencies = [
-    "oyaml==1.0"
+    "oyaml==1.0",
+    "omegaconf==2.3.0",
 ]
 
 [project.urls]

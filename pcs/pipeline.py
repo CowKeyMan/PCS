@@ -2,21 +2,26 @@ import inspect
 from collections.abc import Mapping
 from typing import Callable, TypeAlias
 
+from pcs.component import Component
+
 System: TypeAlias = Callable[..., None | Mapping[str, object]]
 
 
 class Pipeline:
     def __init__(
         self,
-        component: object,
+        component: Component,
         systems: list[System],
         do_null_checks: bool = True,
+        do_seal_check: bool = True,
     ):
         assert len(systems) > 0, "Systems in an empty list"
-        self.component: object = component
-        self.systems: list[System] = systems
-        self.do_null_checks: bool = do_null_checks
-        self.current_system: System = systems[0]
+        if do_seal_check:
+            assert component.is_sealed(), "You need to call seal on the component object to make the config objects static, or otherwise set `do_seal_check` to false for this pipeline"
+        self.component = component
+        self.systems = systems
+        self.do_null_checks = do_null_checks
+        self.current_system = systems[0]
 
     def execute(self) -> None:
         for system in self.systems:
@@ -42,8 +47,4 @@ class Pipeline:
         if result is None:
             return
         for name, obj in result.items():
-            assert hasattr(self.component, name), (
-                f"The component does not have a property '{name}', "
-                "but you are trying to set it"
-            )
             setattr(self.component, name, obj)
