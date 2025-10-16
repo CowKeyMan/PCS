@@ -23,9 +23,14 @@ class Component(Generic[T]):
 
         super().__setattr__("conf", conf)
         super().__setattr__("runtime", runtime)
+        super().__setattr__("sealed", False)
 
-    def seal_conf(self):
+    def seal(self):
         OmegaConf.set_readonly(super().__getattribute__("conf"), True)
+        super().__setattr__("sealed", True)
+
+    def is_sealed(self):
+        return self.sealed
 
     def get_conf(self):
         return super().__getattribute__("conf")
@@ -35,8 +40,10 @@ class Component(Generic[T]):
 
     def __getattribute__(self, name):
         conf: DictConfig = super().__getattribute__("conf")
-        if name in conf:
-            return getattr(conf, name)
+        if name in conf.keys():
+            if name in conf:
+                return getattr(conf, name)
+            return None
         runtime: T = super().__getattribute__("runtime")
         if hasattr(runtime, name):
             return getattr(runtime, name)
