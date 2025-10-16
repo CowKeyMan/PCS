@@ -1,6 +1,7 @@
 import inspect
 from collections.abc import Mapping
 from typing import Callable, TypeAlias
+from pcs.component import Component
 
 System: TypeAlias = Callable[..., None | Mapping[str, object]]
 
@@ -8,7 +9,7 @@ System: TypeAlias = Callable[..., None | Mapping[str, object]]
 class Pipeline:
     def __init__(
         self,
-        component: object,
+        component: Component,
         systems: list[System],
         do_null_checks: bool = True,
     ):
@@ -42,8 +43,4 @@ class Pipeline:
         if result is None:
             return
         for name, obj in result.items():
-            assert hasattr(self.component, name), (
-                f"The component does not have a property '{name}', "
-                "but you are trying to set it"
-            )
             setattr(self.component, name, obj)
