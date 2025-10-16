@@ -2,7 +2,7 @@
 name = "pipeline-component-system"
 version = "0.4.0"
 authors = [
-  { name="Daniel Cauchi", email="cowkeyman@gmail.com" },
+  { name="Daniel Cauchi" },
 ]
 description = "A strange programming framework"
 readme = "README.md"
