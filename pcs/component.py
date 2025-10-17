@@ -37,9 +37,7 @@ class Component(Generic[T]):
     def get_runtime(self):
         return super().__getattribute__("runtime")
 
-    def __getattribute__(self, name):
-        if name not in ["conf", "runtime"]:
-            return super().__getattribute__(name)
+    def __getattr__(self, name):
         conf: DictConfig = super().__getattribute__("conf")
         if name in conf.keys():
             if name in conf:
@@ -59,9 +57,6 @@ class Component(Generic[T]):
         if hasattr(runtime, name):
             return setattr(runtime, name, item)
         raise AttributeError(f"{name} not found in class Component")
-
-    def __hasattr__(self, name):
-        return super().__hasattr__(name) or hasattr(self.runtime, name) or hasattr(self.conf, name)
 
     def __repr__(self):
         conf = super().__getattribute__("conf")
