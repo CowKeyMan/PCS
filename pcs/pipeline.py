@@ -1,29 +1,34 @@
 import inspect
 from collections.abc import Mapping
-from typing import Callable, TypeAlias
+from typing import Callable, TypeAlias, TypeVar
 
 from pcs.component import Component
 
 System: TypeAlias = Callable[..., None | Mapping[str, object]]
 
+T = TypeVar("T")
+
 
 class Pipeline:
     def __init__(
         self,
-        component: Component,
+        component: Component[T],
         systems: list[System],
         do_null_checks: bool = True,
         do_seal_check: bool = True,
     ):
         assert len(systems) > 0, "Systems in an empty list"
-        if do_seal_check:
-            assert component.is_sealed(), "You need to call seal on the component object to make the config objects static, or otherwise set `do_seal_check` to false for this pipeline"
         self.component = component
         self.systems = systems
         self.do_null_checks = do_null_checks
         self.current_system = systems[0]
+        self.do_seal_check = do_seal_check
 
     def execute(self) -> None:
+        if self.do_seal_check:
+            assert self.component.is_sealed(), (
+                "You need to call seal on the component object to make the config objects static, or otherwise set `do_seal_check` to false for this pipeline"
+            )
         for system in self.systems:
             self.current_system = system
             self.check_for_nulls(system)
@@ -39,9 +44,9 @@ class Pipeline:
         if not self.do_null_checks:
             return
         for parameter in inspect.signature(system).parameters:
-            assert (
-                getattr(self.component, parameter) is not None
-            ), f"System: {system.__name__} - Parameter {parameter} was None"
+            assert getattr(self.component, parameter) is not None, (
+                f"System: {system.__name__} - Parameter {parameter} was None"
+            )
 
     def set_component(self, result: None | Mapping[str, object]) -> None:
         if result is None:
