@@ -1,6 +1,7 @@
 from typing import Generic, TypeVar
 
 from omegaconf import DictConfig, OmegaConf
+
 from pcs.init import initialize_object_nones
 
 T = TypeVar("T")
@@ -15,14 +16,38 @@ class Component(Generic[T]):
         return cls(conf, runtime)
 
     def __init__(self, conf: DictConfig, runtime: T):
-        duplicate_keys = set(conf.keys()).intersection(set(runtime.__dict__))
-        assert len(duplicate_keys) == 0, (
-            f"Error initializing component - duplicate keys found: {duplicate_keys}"
-        )
+        internal_attr_to_value = {
+            "conf": conf,
+            "runtime": runtime,
+            "sealed": False,
+        }
+        conf_set = set(conf.keys())
+        runtime_set = set(runtime.__dict__)
+        internal_set = set(internal_attr_to_value.keys())
 
-        super().__setattr__("conf", conf)
-        super().__setattr__("runtime", runtime)
-        super().__setattr__("sealed", False)
+        def assert_no_duplicate_keys(set1: set, set2: set, error_message):
+            duplicate_keys = set1.intersection(set2)
+            assert (
+                len(duplicate_keys) == 0
+            ), f"Error initializing component - {error_message} - {duplicate_keys=}"
+
+        assert_no_duplicate_keys(
+            conf_set,
+            runtime_set,
+            "conf and runtime set cannot have keys which are named the same",
+        )
+        assert_no_duplicate_keys(
+            internal_set,
+            conf_set,
+            "conf set has keys which are equal to internal component keys",
+        )
+        assert_no_duplicate_keys(
+            internal_set,
+            runtime_set,
+            "runtime set has keys which are equal to internal component keys",
+        )
+        for k, v in internal_attr_to_value.items():
+            super().__setattr__(k, v)
 
     def seal(self):
         OmegaConf.set_readonly(super().__getattribute__("conf"), True)
