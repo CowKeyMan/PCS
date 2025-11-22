@@ -1,5 +1,5 @@
 """
-An example showing pcs in action. After installing the library `pip install pipeline-component-system`, you can navigate to the examples directory and run `python example.py --args-files=configs/default.yaml,configs/override1.yaml -r a4=400 -r b.b2=200 b.b2=500`
+An example showing pcs in action. After installing the library `pip install pipeline-component-system`, you can navigate to the examples directory and run `python example.py --args-files=configs/default.yaml,configs/override1.yaml -r a4=400 -r b.b2=200 -r b.b2=500`
 """
 
 import multiprocessing
