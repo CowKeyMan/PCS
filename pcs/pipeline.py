@@ -1,10 +1,11 @@
 import inspect
 from collections.abc import Mapping
-from typing import Callable, TypeAlias, TypeVar
+from types import FunctionType
+from typing import TypeAlias, TypeVar
 
 from pcs.component import Component
 
-System: TypeAlias = Callable[..., None | Mapping[str, object]]
+System: TypeAlias = FunctionType
 
 T = TypeVar("T")
 
@@ -45,11 +46,14 @@ class Pipeline:
             return
         for parameter in inspect.signature(system).parameters:
             assert getattr(self.component, parameter) is not None, (
-                f"System: {system.__name__} - Parameter {parameter} was None"
+                f"System: `{system.__name__}` - Parameter `{parameter}` was None"
             )
 
     def set_component(self, result: None | Mapping[str, object]) -> None:
         if result is None:
             return
         for name, obj in result.items():
+            assert hasattr(self.component, name), (
+                f"Component does not have an attribute called: `{name}`"
+            )
             setattr(self.component, name, obj)
