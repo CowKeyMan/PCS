@@ -56,8 +56,11 @@ class Component(Generic[T]):
     def is_sealed(self):
         return self.sealed
 
-    def get_conf(self):
-        return super().__getattribute__("conf")
+    def get_conf(self, resolve=False):
+        conf = super().__getattribute__("conf")
+        if resolve:
+            return OmegaConf.to_container(conf, resolve=True)
+        return conf
 
     def get_runtime(self):
         return super().__getattribute__("runtime")

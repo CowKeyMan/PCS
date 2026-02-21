@@ -29,6 +29,7 @@ class A:
     a4: int
     a5: int
     b: B
+    reference: int
 
 
 @dataclass
@@ -36,7 +37,9 @@ class C:
     c1: int
     c2: int
     c3: int
-    c_complex: multiprocessing.SimpleQueue  # We can have more than simple types in runtime classes
+    c_complex: (
+        multiprocessing.SimpleQueue
+    )  # We can have more than simple types in runtime classes
 
 
 # Look at the implementation of this function in argmument_parser.py for the exact details, and if you want to do argument parsing outside of the CLI
@@ -44,8 +47,18 @@ data = parse_arguments_cli(A, C)  # A are constants, C are runtime variables
 
 assert (
     str(data)
-    == "Component(conf={'a1': 1, 'a2': -2, 'a3': -3, 'a4': 400, 'a5': '???', 'b': {'b1': 1, 'b2': 500, 'b3': -3, 'b4': -4, 'b5': '???', 'b6': '???'}}, runtime=C(c1=None, c2=None, c3=None, c_complex=None), sealed=False)"
-)
+    == "Component(conf={'a1': 1, 'a2': -2, 'a3': -3, 'a4': 400, 'a5': '???', 'b': {'b1': 1, 'b2': 500, 'b3': -3, 'b4': -4, 'b5': '???', 'b6': '???'}, 'reference': '${a1}'}, runtime=C(c1=None, c2=None, c3=None, c_complex=None), sealed=False)"
+), f"Actual: {str(data)}"
+
+assert (
+    str(data.get_conf())
+    == "{'a1': 1, 'a2': -2, 'a3': -3, 'a4': 400, 'a5': '???', 'b': {'b1': 1, 'b2': 500, 'b3': -3, 'b4': -4, 'b5': '???', 'b6': '???'}, 'reference': '${a1}'}"
+), f"Actual: {str(data.get_conf())}"
+
+assert (
+    str(data.get_conf(resolve=True))
+    == "{'a1': 1, 'a2': -2, 'a3': -3, 'a4': 400, 'a5': '???', 'b': {'b1': 1, 'b2': 500, 'b3': -3, 'b4': -4, 'b5': '???', 'b6': '???'}, 'reference': 1}"
+), f"Actual: {str(data.get_conf(resolve=True))}"
 
 data.a5 = -500
 
@@ -61,11 +74,14 @@ except omegaconf.ReadonlyConfigError:
 def add(x: int, y: int):
     return x + y
 
+
 def store_a_into_c(a1: int, a2: int):  # Use type hinting here
     return {"c1": a1, "c2": a2}
 
+
 def add_a2_and_c2_and_store_into_c2(c2: int, a2: int):
     return {"c2": add(c2, a2)}
+
 
 init_pipeline = Pipeline(
     component=data,
@@ -88,4 +104,7 @@ assert data.c2 == -4  # We added a2 to this, which is -2
 add_pipeline.execute()  # We can run pipelines as many times as we want
 assert data.c1 == 3 and data.c2 == -6
 
-assert str(data) == "Component(conf={'a1': 1, 'a2': -2, 'a3': -3, 'a4': 400, 'a5': -500, 'b': {'b1': 1, 'b2': 500, 'b3': -3, 'b4': -4, 'b5': '???', 'b6': '???'}}, runtime=C(c1=3, c2=-6, c3=None, c_complex=None), sealed=True)"
+assert (
+    str(data)
+    == "Component(conf={'a1': 1, 'a2': -2, 'a3': -3, 'a4': 400, 'a5': -500, 'b': {'b1': 1, 'b2': 500, 'b3': -3, 'b4': -4, 'b5': '???', 'b6': '???'}, 'reference': '${a1}'}, runtime=C(c1=3, c2=-6, c3=None, c_complex=None), sealed=True)"
+)

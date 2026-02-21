@@ -4,3 +4,4 @@ b:
   b1: 1
   b2: 2
   b3: 3
+reference: ${a1}

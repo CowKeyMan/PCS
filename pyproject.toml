@@ -16,8 +16,8 @@ classifiers = [
   "Intended Audience :: Developers"
 ]
 dependencies = [
-    "oyaml==1.0",
-    "omegaconf==2.3.0",
+    "oyaml>=1.0",
+    "omegaconf>=2.3.0",
 ]
 
 [project.urls]
