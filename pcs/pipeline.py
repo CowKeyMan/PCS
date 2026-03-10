@@ -1,7 +1,6 @@
 import inspect
 from collections.abc import Mapping
-from types import Callable
-from typing import Any, TypeAlias, TypeVar
+from typing import Any, Callable, TypeAlias, TypeVar
 
 from pcs.component import Component
 
