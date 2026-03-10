@@ -1,11 +1,11 @@
 import inspect
 from collections.abc import Mapping
-from types import FunctionType
-from typing import TypeAlias, TypeVar
+from types import Callable
+from typing import Any, TypeAlias, TypeVar
 
 from pcs.component import Component
 
-System: TypeAlias = FunctionType
+System: TypeAlias = Callable[..., dict[str, Any] | None]
 
 T = TypeVar("T")
 
