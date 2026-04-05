@@ -7,8 +7,7 @@ from dataclasses import dataclass
 
 import omegaconf
 
-from pcs.argument_parser import parse_arguments_cli
-from pcs.pipeline import Pipeline
+from pcs import Pipeline, parse_arguments_cli
 
 
 @dataclass
