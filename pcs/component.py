@@ -1,6 +1,7 @@
 from typing import Generic, TypeVar
 
 from omegaconf import DictConfig, OmegaConf
+from omegaconf.basecontainer import BaseContainer
 
 from pcs.init import initialize_object_nones
 
@@ -69,7 +70,10 @@ class Component(Generic[T]):
         conf: DictConfig = super().__getattribute__("conf")
         if name in conf.keys():
             if name in conf:
-                return getattr(conf, name)
+                result = getattr(conf, name)
+                if isinstance(result, BaseContainer):
+                    result = OmegaConf.to_object(result)
+                return result
             return None
         runtime: T = super().__getattribute__("runtime")
         if hasattr(runtime, name):
